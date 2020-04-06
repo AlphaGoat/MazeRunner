@@ -4,7 +4,7 @@
 #include "camera.h"
 
 
-void setCameraDisplay(survivor *Player_Character, camera *Camera,
+void setCameraDisplay(survivor *Player_Character, camera **Camera,
         int **GameGrid, SDL_Texture **textureArray, SDL_Renderer *renderer) {
     /* Sets what camera displays based on the position of the player character, 
      * and what will be rendered on screen */
@@ -12,87 +12,91 @@ void setCameraDisplay(survivor *Player_Character, camera *Camera,
     /* The (x,y) coordinates of the camera will be based on some offset of the 
      * player character's position, and will depend on if the character is
      * moving or not */
-    if (abs(Player_Character->x_velocity) > 0) {
-        /* If the player character is within the offsets at the edge of the 
-         * camera view, move the character sprite in the camera, rather than
-         * the camera itself */
-        if      ((Camera->charSpriteCoords->x < (Camera->width - Camera->x_offset)) || 
-                (Camera->charSpriteCoords->x > (Camera->x_offset))) 
-            Camera->charSpriteCoords->x += Player_Character->x_velocity * TILE_WIDTH;
+    int x_offset = (*Camera)->x_offset;
+    int y_offset = (*Camera)->y_offset;
+    int char_posx = (*Camera)->charSpriteCoords->x;
+    int char_posy = (*Camera)->charSpriteCoords->y;
+    int cam_posx = (*Camera)->x;
+    int cam_posy = (*Camera)->y;
+
+    int x_velocity = Player_Character->x_velocity;
+    int y_velocity = Player_Character->y_velocity;
+
+    if (abs(x_velocity) > 0) {
+        /* If the character is at the edge of the offsets, move camera with player
+         * character */ 
+        if (((char_posx >= ((*Camera)->width - x_offset)) &&
+                (x_velocity > 0)) ||
+                ((char_posx <= x_offset) &&
+                (x_velocity < 0)))
+            (*Camera)->x += x_velocity * TILE_WIDTH;  
+        else
+            (*Camera)->charSpriteCoords->x += x_velocity * TILE_WIDTH;
+    }
+    // If the player character is not moving and the camera is not centered on the 
+    // player, slowly drift the camera to be centered to the character's position
+    else if ((x_velocity == 0) && (char_posx > ((*Camera)->width / 2))) {
+        /* Drift camera right */
+        (*Camera)->x += (*Camera)->camera_drift;
+        (*Camera)->charSpriteCoords->x -= (*Camera)->camera_drift;
+    }
+
+    else if ((x_velocity == 0) && (char_posx < ((*Camera)->width / 2))) {
+        /* Drift camera left */
+        (*Camera)->x -=(*Camera)->camera_drift;
+        (*Camera)->charSpriteCoords->x += (*Camera)->camera_drift;
+    }
+
+    if (abs(y_velocity) > 0) {
 
         /* If the character is at the edge of the offsets, move camera with player
          * character */ 
-        else if (((Camera->charSpriteCoords->x >= (Camera->width - Camera->x_offset)) &&
-                (Player_Character->x_velocity > 0)) ||
-                ((Camera->charSpriteCoords->x <= (Camera->x_offset)) &&
-                (Player_Character->x_velocity < 0)))
+        if (((char_posy >= ((*Camera)->height - y_offset)) &&
+                (y_velocity > 0)) ||
+                ((char_posy <= y_offset) &&
+                (y_velocity < 0)))
 
-            Camera->x += Player_Character->x_velocity * TILE_WIDTH;
+           (*Camera)->y += y_velocity * TILE_HEIGHT;
+        else
+           (*Camera)->charSpriteCoords->y += y_velocity * TILE_WIDTH;
     }
     
-    // If the player character is not moving and the camera is not centered on the 
-    // player, slowly drift the camera to be centered to the character's position
-    else if ((Player_Character->x_velocity == 0) && 
-            ((Camera->x / 2) != Camera->charSpriteCoords->x)) {
-
-            if ((Camera->x / 2) > Camera->charSpriteCoords->x)
-                Camera->x -= Camera->camera_drift;
-
-            else 
-                Camera->x += Camera->camera_drift;
+    else if ((y_velocity == 0) && (char_posy > ((*Camera)->height / 2))) {
+        /* Drift camera right */
+        (*Camera)->y += (*Camera)->camera_drift;
+        (*Camera)->charSpriteCoords->y -= (*Camera)->camera_drift;
     }
 
-    if (abs(Player_Character->y_velocity) > 0) {
-        /* If the player character is within the offsets at the edge of the 
-         * camera view, move the character sprite in the camera, rather than
-         * the camera itself */
-        if      ((Camera->charSpriteCoords->y < (Camera->width - Camera->y_offset)) || 
-                (Camera->charSpriteCoords->y > (Camera->y_offset))) 
-            Camera->charSpriteCoords->y += Player_Character->y_velocity * TILE_HEIGHT;
-
-        /* If the character is at the edge of the offsets, move camera with player
-         * character */ 
-        else if (((Camera->charSpriteCoords->y >= (Camera->width - Camera->y_offset)) &&
-                (Player_Character->y_velocity > 0)) ||
-                ((Camera->charSpriteCoords->y <= (Camera->y_offset)) &&
-                (Player_Character->y_velocity < 0)))
-
-            Camera->y += Player_Character->y_velocity * TILE_HEIGHT;
+    else if ((y_velocity == 0) && (char_posy < ((*Camera)->height / 2))) {
+        /* Drift camera left */
+        (*Camera)->y -=(*Camera)->camera_drift;
+        (*Camera)->charSpriteCoords->y += (*Camera)->camera_drift;
     }
-    
-    // If the player character is not moving and the camera is not centered on the 
-    // player, slowly drift the camera to be centered to the character's position
-    else if ((Player_Character->y_velocity == 0) && 
-            ((Camera->y / 2) != Camera->charSpriteCoords->y)) {
-
-            if ((Camera->y / 2) > Camera->charSpriteCoords->y)
-                Camera->y -= Camera->camera_drift;
-
-            else 
-                Camera->y += Camera->camera_drift;
-    }
-
-    
 
     // Render tiles to map based on the camera's coordinates
     SDL_Rect renderRect; /* Rectangle to keep track of the portion of the camera we are rendering in a given pass */
     renderRect.w = TILE_WIDTH;
     renderRect.h = TILE_HEIGHT;
 //    renderRect.x = 0;
-//    renderRect.y = Camera->height;
+//    renderRect.y =(*Camera)->height;
 
     /* Retrieve grid coords of top left corner of camera view */
-    int grid_x = floor(Camera->x / TILE_WIDTH);
-    int grid_y = floor(Camera->y / TILE_HEIGHT);
+    int grid_x = floor((*Camera)->x / TILE_WIDTH);
+    int grid_y = floor((*Camera)->y / TILE_HEIGHT);
+
+//    if ((grid_x != 120) && (grid_y != 90)) {
+        //printf("grid_x: %d\n", grid_x);
+        //printf("grid_y: %d\n", grid_y);
+ //   }
 
     /* height of camera view in tiles */
-    int cam_tile_height = floor(Camera->height / TILE_HEIGHT);
+    int cam_tile_height = floor((*Camera)->height / TILE_HEIGHT);
 
     /* Starting from top left corner of camera screen, render tiles based on map
      * provided by 'GameGrid' */
     for (int i = cam_tile_height; i > 0; i-=1) {
         renderRect.y = i * TILE_HEIGHT;
-        for (int j = 0; j < floor(Camera->width / TILE_WIDTH); j+=1) {
+        for (int j = 0; j < floor((*Camera)->width / TILE_WIDTH); j+=1) {
 
             // Update camera rect object to slide render window to next tile
             renderRect.x = j * TILE_WIDTH;
@@ -100,8 +104,7 @@ void setCameraDisplay(survivor *Player_Character, camera *Camera,
             /* Convert "Camera Grids" into "Game tiles" */
             int tile_row = grid_y - (cam_tile_height - i);
             int tile_col = grid_x + j;
-
-            renderTile(j, i, GameGrid, textureArray, &renderRect, renderer);
+            renderTile(tile_col, tile_row, GameGrid, textureArray, &renderRect, renderer);
             
         }
     }

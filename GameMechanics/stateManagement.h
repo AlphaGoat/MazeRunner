@@ -8,8 +8,8 @@ static const int NUM_SURVIVORS = 4;
 static const int NUM_GENS_TO_COMPLETE = 5;
 
 /* Dimensions of Game World, in tiles */
-static const int GAME_HEIGHT = 100;
-static const int GAME_WIDTH = 100;
+static const int GAME_HEIGHT = 500;
+static const int GAME_WIDTH = 500;
 
 /* Dimensions of individual tiles, in pixels */
 static const int TILE_HEIGHT = 10;

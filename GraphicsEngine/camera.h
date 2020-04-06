@@ -29,7 +29,7 @@ typedef struct Camera {
 
 } camera;
 
-void setCameraDisplay(survivor *Player_Character, camera *Camera,
+void setCameraDisplay(survivor *Player_Character, camera **Camera,
         int **GameGrid, SDL_Texture **textureArray, SDL_Renderer *renderer);
 
 void renderTile(int col, int row, int **GameGrid, 
