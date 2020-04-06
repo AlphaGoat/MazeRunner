@@ -1,6 +1,9 @@
 #include <SDL2/SDL.h>
 #include "game_objects.h"
 #include "gameGrid.h"
+#include "stateManagement.h"
+#include "../defs.h"
+
 
 void getCharSpriteChoords(survivor *character, SDL_Rect *spriteRect) {
     /* fill input sprite sheet rectangle with coordinates of corresponding
@@ -24,6 +27,25 @@ void getCharSpriteChoords(survivor *character, SDL_Rect *spriteRect) {
         }
     }
 }
+
+int checkForTerrainCollision(int pos_x, int pos_y, int **GameGrid) {
+    /* Checks position to see if there is impassible terrain in way
+     * of player */
+    /* Check if position puts player out of bounds */
+    if ((pos_y > GAME_HEIGHT) || (pos_y < 0) || (pos_x > GAME_WIDTH) || (pos_x < 0))
+        return 1;
+
+    /* Check if the terrain tile itself is impassible to player */
+    int tile = *(*(GameGrid) + (pos_y * GAME_HEIGHT) + pos_x);
+    switch(tile) {
+        case wall_tile:
+            return 1;
+        default:
+            return 0;
+    }
+    return 0;
+}
+
 
 //void *moveSurvivorInWindow (survivor player_char,
 //        SDL_Rect *spriteWindowRect) {

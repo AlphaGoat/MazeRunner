@@ -2,11 +2,11 @@
 #include <SDL2/SDL_image.h>
 
 #include "texture_app.h"
+#include "../defs.h"
 #include "../GameMechanics/game_objects.h"
 #include "../GameMechanics/gameGrid.h"
 #include "../GameMechanics/stateManagement.h"
 
-const int FRAME_DELAY = 100;
 
 void getSpriteCoords(survivor *character, int offset, SDL_Rect *spriteRect, 
         sprite_render_info *sprite_coords) {

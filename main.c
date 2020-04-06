@@ -11,6 +11,7 @@
 #include "GraphicsEngine/texture_app.h"
 
 #include "GraphicsEngine/spriteSheetOps.h"
+#include "defs.h"
 
 // Modules to be tested
 #include "GraphicsEngine/camera.h"
@@ -46,8 +47,8 @@ int main(int argc, char *argv[]){
     survivor sailorMoon;
 
     /* Survivor's position on GameGrid */
-    sailorMoon.pos_x = 40;
-    sailorMoon.pos_y = 40;
+    sailorMoon.pos_x = 400;
+    sailorMoon.pos_y = 400;
     sailorMoon.x_velocity = 0;
     sailorMoon.y_velocity = 0;
     sailorMoon.orientation = SOUTH;
@@ -56,8 +57,8 @@ int main(int argc, char *argv[]){
 
     /* Initialize Camera Object */
     camera PlayerCamera;
-    PlayerCamera.x = (sailorMoon.pos_x * TILE_WIDTH) - 600;
-    PlayerCamera.y = (sailorMoon.pos_y * TILE_HEIGHT) + 450;
+    PlayerCamera.x = sailorMoon.pos_x - 600;
+    PlayerCamera.y = sailorMoon.pos_y + 450;
     PlayerCamera.height = 900;
     PlayerCamera.width = 1200;
     PlayerCamera.x_offset = 300;
@@ -135,25 +136,34 @@ int main(int argc, char *argv[]){
                 switch(input.key.keysym.sym) {
                     case SDLK_LEFT:
                     case SDLK_a:
-                        sailorMoon.x_velocity = -1;
+                        if (!checkForTerrainCollision(sailorMoon.pos_x - 1,
+                                    sailorMoon.pos_y, &GameGrid_ptr))
+                            sailorMoon.x_velocity = -1;
+
                         sailorMoon.orientation = WEST;
 //                        print_coords = 1;
                         break;
                     case SDLK_RIGHT:
                     case SDLK_d:
-                        sailorMoon.x_velocity = 1;
+                        if (!checkForTerrainCollision(sailorMoon.pos_x + 1,
+                                    sailorMoon.pos_y, &GameGrid_ptr))
+                            sailorMoon.x_velocity = 1;
                         sailorMoon.orientation = EAST;
  //                       print_coords = 1;
                         break;
                     case SDLK_DOWN:
                     case SDLK_s:
-                        sailorMoon.y_velocity = 1;
+                        if (!checkForTerrainCollision(sailorMoon.pos_x,
+                                    sailorMoon.pos_y + 1, &GameGrid_ptr))
+                            sailorMoon.y_velocity = 1;
                         sailorMoon.orientation = SOUTH;
 //                        print_coords = 1;
                         break;
                     case SDLK_UP:
                     case SDLK_w:
-                        sailorMoon.y_velocity = -1;
+                        if (!checkForTerrainCollision(sailorMoon.pos_x,
+                                    sailorMoon.pos_y - 1, &GameGrid_ptr))
+                            sailorMoon.y_velocity = -1;
                         sailorMoon.orientation = NORTH;
 //                        print_coords = 1;
                         break;

@@ -17,6 +17,7 @@ typedef struct Survivor {
     /* Velocity vector information */
     int x_velocity;
     int y_velocity;
+    int total_velocity;
 
     /* physical orientation (which direction player
      * is facing on game map). Tells renderer which

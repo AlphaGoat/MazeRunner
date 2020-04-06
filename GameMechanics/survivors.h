@@ -5,6 +5,8 @@
 
 #include "game_objects.h"
 
-void *moveSurvivorInWindow (survivor player_char, SDL_Rect *spriteWindowRect);
+//void *moveSurvivorInWindow (survivor player_char, SDL_Rect *spriteWindowRect);
+
+int checkForTerrainCollision(int pos_x, int pos_y, int **GameGrid);
 
 #endif

@@ -5,6 +5,7 @@
 #include "survivors.h"
 #include "gameGrid.h"
 #include "stateManagement.h"
+#include "../defs.h"
 
 
 
