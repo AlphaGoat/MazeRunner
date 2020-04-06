@@ -24,6 +24,9 @@ void printCoords(int pos_x, int pos_y, int camera_x, int camera_y);
 
 int main(int argc, char *argv[]){
 
+    /* seed random number generator */
+    srand((unsigned)time(NULL));
+
     sprite_render_info sailor_moon_sprite_dims;
     sailor_moon_sprite_dims.y_offset = 5;
     sailor_moon_sprite_dims.x_offset = 0;
@@ -53,12 +56,14 @@ int main(int argc, char *argv[]){
 
     /* Initialize Camera Object */
     camera PlayerCamera;
-    PlayerCamera.x = sailorMoon.pos_x * TILE_WIDTH;
-    PlayerCamera.y = sailorMoon.pos_y * TILE_HEIGHT;
+    PlayerCamera.x = (sailorMoon.pos_x * TILE_WIDTH) - 600;
+    PlayerCamera.y = (sailorMoon.pos_y * TILE_HEIGHT) + 450;
     PlayerCamera.height = 900;
     PlayerCamera.width = 1200;
     PlayerCamera.x_offset = 300;
     PlayerCamera.y_offset = 200;
+    PlayerCamera.camera_drift = 10;
+    camera *playerCamera_ptr = &PlayerCamera;
 
     /* Initialize SDL Rectangle defining player character sprite's
      * position in camera view port */
@@ -167,25 +172,25 @@ int main(int argc, char *argv[]){
                     case SDLK_a:
                         if (sailorMoon.x_velocity < 0)
                             sailorMoon.x_velocity = 0;
-                        print_coords = 0;
+//                        print_coords = 0;
                         break;
                     case SDLK_RIGHT:
                     case SDLK_d:
                         if (sailorMoon.x_velocity > 0)
                             sailorMoon.x_velocity = 0;
-                        print_coords = 0;
+//                        print_coords = 0;
                         break;
                     case SDLK_DOWN:
                     case SDLK_s:
                         if (sailorMoon.y_velocity > 0)
                             sailorMoon.y_velocity = 0;
-                        print_coords = 0;
+//                        print_coords = 0;
                         break;
                     case SDLK_UP:
                     case SDLK_w:
                         if (sailorMoon.y_velocity < 0)
                             sailorMoon.y_velocity = 0;
-                        print_coords = 0;
+//                        print_coords = 0;
                         break;
                     default:
                         break;
@@ -226,7 +231,7 @@ int main(int argc, char *argv[]){
         SDL_RenderClear(renderer);
 
         /* Update player character's view camera */
-        setCameraDisplay(&sailorMoon, &PlayerCamera, &GameGrid_ptr, &texTileArray[0],
+        setCameraDisplay(&sailorMoon, &playerCamera_ptr, &GameGrid_ptr, &texTileArray[0],
                 renderer);
 
         if (print_coords)
@@ -241,6 +246,8 @@ int main(int argc, char *argv[]){
         else
             SDL_RenderCopy(renderer, spriteSheet, &rcSheetSprite, PlayerCamera.charSpriteCoords);
         SDL_RenderPresent(renderer);
+//        printf("Camera (y,x): (%d, %d)", PlayerCamera.y, PlayerCamera.x);
+
 
         // Do nothing until the timer for 1 frame expires
 //        sleep(1.0/FRAMES_PER_SEC);
