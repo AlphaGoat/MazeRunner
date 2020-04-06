@@ -85,25 +85,6 @@ typedef struct Hatch {
     int open_flag; /* 1 if gate is open, 0 if closed */
 } hatch;
 
-/* Initialize a structure for the player's camers */
-typedef struct Camera {
-    /* position of top left view tile in Game Grid */
-    int x;
-    int y;
-
-    /* width and height of camera window, in pixels */
-    int width;
-    int height;
-
-    /* offset of character to edges of camera screen */
-    int x_offset;
-    int y_offset;
-
-    /* How quickly the camera drifts back to be centered on the
-     * player character's position when the player is idle */
-    int camera_drift;
-
-} camera;
 
 enum HealthStates {
     full_health,

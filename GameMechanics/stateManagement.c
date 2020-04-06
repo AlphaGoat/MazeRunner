@@ -49,14 +49,36 @@ game_state * InitGameState(int map_height, int map_width, int num_generators) {
 
     /* Recieve pointer to initialized generators */
     generator *gen_array_ptr;
-    gen_array_ptr = InitGenerators(num_generators, map_height, map_width);
+    int bound_gen_radius = 50;
+    gen_array_ptr = InitGenerators(num_generators, map_height, map_width,
+            bound_gen_radius, GameGrid);
     
     return game_state_ptr;
 };
 
 /* Function to initialize terrain of map */
-int InitMapTerrain(int map_height, int map_width, int **GameGrid);
-
+int InitMapTerrain(int **GameGrid) {
+    for (int row = 0; row < GAME_HEIGHT; row++) {
+        for (int col = 0; col < GAME_WIDTH; col++) {
+            int tile_choice = rand() % 3;
+            switch(tile_choice) {
+                case 0:
+                    *((*GameGrid) + (row * GAME_HEIGHT) + col) = grass_tile;
+                    break;
+                case 1:
+                    *((*GameGrid) + (row * GAME_HEIGHT) + col) = dirt_tile;
+                    break;
+                case 2:
+                    *((*GameGrid) + (row * GAME_HEIGHT) + col) = wall_tile;
+                    break;
+                default:
+                    *((*GameGrid) + (row * GAME_HEIGHT) + col) = grass_tile;
+                    break;
+            }
+        }
+    }
+    return 1;
+}
 
 /* Function to initialize and randomly place generators in world map */
 generator * InitGenerators(int num_generators, int map_height, int map_width,
@@ -77,6 +99,8 @@ generator * InitGenerators(int num_generators, int map_height, int map_width,
 
             /* Check to see that the generator isn't being placed in an
              * incompatible tile */
+            if (checkForCollision(x, y, GameGrid))
+                    continue;
 
             /* Check to see that the proposed x, y are not within
              * the boundary radius of another generator */
@@ -107,6 +131,22 @@ generator * InitGenerators(int num_generators, int map_height, int map_width,
 
 survivor * InitSurvivors(int num_survivors, int map_height, int map_width);
 
+int checkForCollision(int x, int y, int **GameGrid) {
+    /* Checks game grid to see if the tile at position (x,y)
+     * collides with game objects */
+    int tile_type = *(*(GameGrid) + y * GAME_HEIGHT + x);
+
+    switch(tile_type) {
+        case grass_tile:
+        case dirt_tile:
+            return 0;
+        case wall_tile:
+        case outside_map_tile:
+            return 1;
+        default:
+            return 0;
+    }
+}
 
     
                     

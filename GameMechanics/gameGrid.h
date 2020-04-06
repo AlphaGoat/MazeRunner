@@ -1,13 +1,6 @@
 #ifndef GAMEGRID_H
 #define GAMEGRID_H
 
-enum Tiles {
-    grass_tile,
-    survivor_tile,
-    killer_tile,
-    generator_tile,
-    hatch_tile,
-} tile;
 
 enum Orientation {
     NORTH,

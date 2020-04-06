@@ -3,6 +3,7 @@
 #ifndef TEXTUREAPP_H
 #define TEXTUREAPP_H
 
+#include <SDL2/SDL.h>
 
 typedef struct SpriteRenderInfo {
     int y_offset; /* Defines offset from top of sprite sheet */
@@ -24,6 +25,9 @@ typedef struct SpriteRenderInfo {
     int num_motion_frames;
 } sprite_render_info;
 
+SDL_Texture * InitializeGreenTexture(SDL_Renderer *renderer);
+
+int initializeTileTextures(SDL_Texture **texture_array, SDL_Renderer *renderer);
 
 #endif
 

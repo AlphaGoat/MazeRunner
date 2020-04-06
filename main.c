@@ -7,21 +7,22 @@
 #include "GameMechanics/gameGrid.h"
 #include "GameMechanics/game_objects.h"
 #include "GameMechanics/survivors.h"
+#include "GameMechanics/stateManagement.h"
 #include "GraphicsEngine/texture_app.h"
 
 #include "GraphicsEngine/spriteSheetOps.h"
 
-// Modules that are untested
+// Modules to be tested
+#include "GraphicsEngine/camera.h"
 
 
 #define FRAMES_PER_SEC 60
 
 time_t frame_init_time;
 
-int main(int argc, char *argv[]){
+void printCoords(int pos_x, int pos_y, int camera_x, int camera_y);
 
-//    int height;
-//    int width;
+int main(int argc, char *argv[]){
 
     sprite_render_info sailor_moon_sprite_dims;
     sailor_moon_sprite_dims.y_offset = 5;
@@ -32,20 +33,16 @@ int main(int argc, char *argv[]){
     sailor_moon_sprite_dims.sprite_width = 386 / 18;
     sailor_moon_sprite_dims.num_motion_frames = 4;
 
-//    height = width = 100;
-
-//    // Initialize Game Grid
-//    int **GameGrid = NULL;
-//    int *GameGrid_data = NULL;
-//    GameGrid_data = allocateGameGrid(height, width, &GameGrid);
-//    if (GameGrid == NULL) {
-//        printf("Memory for GameGrid failed to allocate\n");
-//        return -1;
-//    }
-
+    int GameGrid[GAME_WIDTH * GAME_HEIGHT];
+    int *GameGrid_ptr = GameGrid;
+    /* Initialize Game Grid */
+//    allocateGameGrid(GAME_HEIGHT, GAME_WIDTH, &GameGrid);
+    InitMapTerrain(&GameGrid_ptr);
+    
     // Initialize survivors
     survivor sailorMoon;
 
+    /* Survivor's position on GameGrid */
     sailorMoon.pos_x = 40;
     sailorMoon.pos_y = 40;
     sailorMoon.x_velocity = 0;
@@ -54,9 +51,28 @@ int main(int argc, char *argv[]){
     sailorMoon.health_state = full_health;
     sailorMoon.SpriteRenderInfo = &sailor_moon_sprite_dims;
 
+    /* Initialize Camera Object */
+    camera PlayerCamera;
+    PlayerCamera.x = sailorMoon.pos_x * TILE_WIDTH;
+    PlayerCamera.y = sailorMoon.pos_y * TILE_HEIGHT;
+    PlayerCamera.height = 900;
+    PlayerCamera.width = 1200;
+    PlayerCamera.x_offset = 300;
+    PlayerCamera.y_offset = 200;
+
+    /* Initialize SDL Rectangle defining player character sprite's
+     * position in camera view port */
+    SDL_Rect sprite_coord_in_view_port;
+    sprite_coord_in_view_port.h = 30;
+    sprite_coord_in_view_port.w = 20;
+    sprite_coord_in_view_port.x = 600;
+    sprite_coord_in_view_port.y = 450;
+
+    PlayerCamera.charSpriteCoords = &sprite_coord_in_view_port;
+
     // Initialize game window
     SDL_Init(SDL_INIT_EVERYTHING);
-    IMG_Init(IMG_INIT_PNG);
+    IMG_Init(IMG_INIT_PNG | IMG_INIT_JPG);
 
     SDL_Window *game_window = SDL_CreateWindow("DBD2EB", SDL_WINDOWPOS_UNDEFINED, 
             SDL_WINDOWPOS_UNDEFINED, 1200, 900, SDL_WINDOW_SHOWN);
@@ -64,6 +80,10 @@ int main(int argc, char *argv[]){
     SDL_Renderer *renderer = SDL_CreateRenderer(game_window, -1, 0);
 
     SDL_Event input;
+
+    /* Initialize texture tile array */
+    SDL_Texture *texTileArray[4];
+    initializeTileTextures(&(texTileArray[0]), renderer);
 
     /* Initialize sprite sheet */
     SDL_Texture *spriteSheet = NULL;
@@ -82,13 +102,6 @@ int main(int argc, char *argv[]){
     SDL_FreeSurface(temp);
     SDL_FreeSurface(temp_flipped);
 
-    /* window rect defines placement of character sprite on game window */
-    SDL_Rect spriteWindowCoords;
-    spriteWindowCoords.x = 600;
-    spriteWindowCoords.y = 450;
-    spriteWindowCoords.w = 20;
-    spriteWindowCoords.h = 30;
-
     /* sprite rect gives coordinates of sprite on sprite sheet */
     SDL_Rect rcSheetSprite;
     rcSheetSprite.x = 0;
@@ -104,6 +117,8 @@ int main(int argc, char *argv[]){
 
     /* Initate game loop */
     int quit = 0;
+    /* debugging flag */
+    int print_coords = 0;
     while (!quit) {
 
         frame_init_time = SDL_GetTicks();
@@ -117,21 +132,25 @@ int main(int argc, char *argv[]){
                     case SDLK_a:
                         sailorMoon.x_velocity = -1;
                         sailorMoon.orientation = WEST;
+//                        print_coords = 1;
                         break;
                     case SDLK_RIGHT:
                     case SDLK_d:
                         sailorMoon.x_velocity = 1;
                         sailorMoon.orientation = EAST;
+ //                       print_coords = 1;
                         break;
                     case SDLK_DOWN:
                     case SDLK_s:
                         sailorMoon.y_velocity = 1;
                         sailorMoon.orientation = SOUTH;
+//                        print_coords = 1;
                         break;
                     case SDLK_UP:
                     case SDLK_w:
                         sailorMoon.y_velocity = -1;
                         sailorMoon.orientation = NORTH;
+//                        print_coords = 1;
                         break;
                     default:
                         break;
@@ -148,21 +167,25 @@ int main(int argc, char *argv[]){
                     case SDLK_a:
                         if (sailorMoon.x_velocity < 0)
                             sailorMoon.x_velocity = 0;
+                        print_coords = 0;
                         break;
                     case SDLK_RIGHT:
                     case SDLK_d:
                         if (sailorMoon.x_velocity > 0)
                             sailorMoon.x_velocity = 0;
+                        print_coords = 0;
                         break;
                     case SDLK_DOWN:
                     case SDLK_s:
                         if (sailorMoon.y_velocity > 0)
                             sailorMoon.y_velocity = 0;
+                        print_coords = 0;
                         break;
                     case SDLK_UP:
                     case SDLK_w:
                         if (sailorMoon.y_velocity < 0)
                             sailorMoon.y_velocity = 0;
+                        print_coords = 0;
                         break;
                     default:
                         break;
@@ -183,11 +206,17 @@ int main(int argc, char *argv[]){
         getSpriteCoords(&sailorMoon, 5, &rcSheetSprite, sailorMoon.SpriteRenderInfo);
 
         /* Update sailor moon's position */
-        sailorMoon.pos_x += sailorMoon.x_velocity;
-        sailorMoon.pos_y += sailorMoon.y_velocity;
+        /* factor in collision detection for edge of map */
+        if (!((sailorMoon.pos_x + sailorMoon.x_velocity >= GAME_WIDTH) ||
+             (sailorMoon.pos_x + sailorMoon.x_velocity < 0)))
+            sailorMoon.pos_x += sailorMoon.x_velocity;
+
+        if (!((sailorMoon.pos_y + sailorMoon.y_velocity >= GAME_HEIGHT) ||
+             (sailorMoon.pos_y + sailorMoon.y_velocity < 0)))
+            sailorMoon.pos_y += sailorMoon.y_velocity;
 
 //        SDL_Rect *spriteWindowCoords;
-        moveSurvivorInWindow(sailorMoon, &spriteWindowCoords);
+//        moveSurvivorInWindow(sailorMoon, &spriteWindowCoords);
 
 //        /* Update sailor moon's position in the game window */
 //        spriteWindowCoords.x = sailorMoon.pos_x;
@@ -196,13 +225,21 @@ int main(int argc, char *argv[]){
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
         SDL_RenderClear(renderer);
 
+        /* Update player character's view camera */
+        setCameraDisplay(&sailorMoon, &PlayerCamera, &GameGrid_ptr, &texTileArray[0],
+                renderer);
+
+        if (print_coords)
+            printCoords(sailorMoon.pos_x, sailorMoon.pos_y, PlayerCamera.x,
+                    PlayerCamera.y);
+
         //Copy texture on to window using
         //renderer, sprite rectangle, and window rectangle
         if (sailorMoon.orientation == EAST) 
             /* If survivor is facing right, then we'll need to use flipped sprite sheet */
-            SDL_RenderCopy(renderer, flipSpriteSheet, &rcSheetSprite, &spriteWindowCoords);
+            SDL_RenderCopy(renderer, flipSpriteSheet, &rcSheetSprite, PlayerCamera.charSpriteCoords);
         else
-            SDL_RenderCopy(renderer, spriteSheet, &rcSheetSprite, &spriteWindowCoords);
+            SDL_RenderCopy(renderer, spriteSheet, &rcSheetSprite, PlayerCamera.charSpriteCoords);
         SDL_RenderPresent(renderer);
 
         // Do nothing until the timer for 1 frame expires
@@ -216,6 +253,8 @@ int main(int argc, char *argv[]){
 
     /* Destroy SDL objects that were created */
     SDL_DestroyTexture(spriteSheet);
+    for (int i = 0; i < 4; i++)
+        SDL_DestroyTexture(texTileArray[i]);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(game_window);
     IMG_Quit();
@@ -223,4 +262,10 @@ int main(int argc, char *argv[]){
 //    freeGameGridMem(GameGrid_data, &GameGrid);
 
     return 1;
+}
+
+/* Debugging function */
+void printCoords(int pos_x, int pos_y, int camera_x, int camera_y) {
+    printf("char (pos_y, pos_x): (%d, %d)", pos_y, pos_x);
+    printf("camera (pos_y, pos_x): (%d, %d)", pos_y, pos_x);
 }
