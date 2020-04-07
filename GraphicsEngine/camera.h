@@ -25,14 +25,16 @@ typedef struct Camera {
 
     /* Rect object defining the placement of the character's 
      * object with respect to the camera view port*/
-    SDL_Rect *charSpriteCoords;
+    SDL_Rect spriteCoords;
 
 } camera;
 
-void setCameraDisplay(survivor *Player_Character, camera **Camera,
+void setCameraDisplay(survivor **Player_Character, camera **Camera,
         int **GameGrid, SDL_Texture **textureArray, SDL_Renderer *renderer);
 
 void renderTile(int col, int row, int **GameGrid, 
         SDL_Texture **textureArray, SDL_Rect *renderRect, SDL_Renderer *renderer);
+
+void calculateCameraCoords(camera **Camera, survivor **Player_Character);
 
 #endif

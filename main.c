@@ -55,6 +55,10 @@ int main(int argc, char *argv[]){
     sailorMoon.health_state = full_health;
     sailorMoon.SpriteRenderInfo = &sailor_moon_sprite_dims;
 
+    /* Pointer to sailor moon object */
+    survivor *sailorMoon_ptr;
+    sailorMoon_ptr = &sailorMoon;
+
     /* Initialize Camera Object */
     camera PlayerCamera;
     PlayerCamera.x = sailorMoon.pos_x - 600;
@@ -63,18 +67,16 @@ int main(int argc, char *argv[]){
     PlayerCamera.width = 1200;
     PlayerCamera.x_offset = 300;
     PlayerCamera.y_offset = 200;
-    PlayerCamera.camera_drift = 10;
+    PlayerCamera.camera_drift = 5;
     camera *playerCamera_ptr = &PlayerCamera;
 
     /* Initialize SDL Rectangle defining player character sprite's
      * position in camera view port */
-    SDL_Rect sprite_coord_in_view_port;
-    sprite_coord_in_view_port.h = 30;
-    sprite_coord_in_view_port.w = 20;
-    sprite_coord_in_view_port.x = 600;
-    sprite_coord_in_view_port.y = 450;
+    PlayerCamera.spriteCoords.h = 30;
+    PlayerCamera.spriteCoords.w = 20;
+    PlayerCamera.spriteCoords.x = 600;
+    PlayerCamera.spriteCoords.y = 450;
 
-    PlayerCamera.charSpriteCoords = &sprite_coord_in_view_port;
 
     // Initialize game window
     SDL_Init(SDL_INIT_EVERYTHING);
@@ -136,34 +138,33 @@ int main(int argc, char *argv[]){
                 switch(input.key.keysym.sym) {
                     case SDLK_LEFT:
                     case SDLK_a:
-                        if (!checkForTerrainCollision(sailorMoon.pos_x - 1,
-                                    sailorMoon.pos_y, &GameGrid_ptr))
-                            sailorMoon.x_velocity = -1;
-
+//                        if (!checkForTerrainCollision(sailorMoon.pos_x - 1,
+//                                    sailorMoon.pos_y, &GameGrid_ptr))
+                        sailorMoon.x_velocity = -1;
                         sailorMoon.orientation = WEST;
 //                        print_coords = 1;
                         break;
                     case SDLK_RIGHT:
                     case SDLK_d:
-                        if (!checkForTerrainCollision(sailorMoon.pos_x + 1,
-                                    sailorMoon.pos_y, &GameGrid_ptr))
-                            sailorMoon.x_velocity = 1;
+//                        if (!checkForTerrainCollision(sailorMoon.pos_x + 1,
+//                                    sailorMoon.pos_y, &GameGrid_ptr))
+                        sailorMoon.x_velocity = 1;
                         sailorMoon.orientation = EAST;
  //                       print_coords = 1;
                         break;
                     case SDLK_DOWN:
                     case SDLK_s:
-                        if (!checkForTerrainCollision(sailorMoon.pos_x,
-                                    sailorMoon.pos_y + 1, &GameGrid_ptr))
-                            sailorMoon.y_velocity = 1;
+//                        if (!checkForTerrainCollision(sailorMoon.pos_x,
+//                                    sailorMoon.pos_y + 1, &GameGrid_ptr))
+                        sailorMoon.y_velocity = 1;
                         sailorMoon.orientation = SOUTH;
 //                        print_coords = 1;
                         break;
                     case SDLK_UP:
                     case SDLK_w:
-                        if (!checkForTerrainCollision(sailorMoon.pos_x,
-                                    sailorMoon.pos_y - 1, &GameGrid_ptr))
-                            sailorMoon.y_velocity = -1;
+//                        if (!checkForTerrainCollision(sailorMoon.pos_x,
+//                                    sailorMoon.pos_y - 1, &GameGrid_ptr))
+                        sailorMoon.y_velocity = -1;
                         sailorMoon.orientation = NORTH;
 //                        print_coords = 1;
                         break;
@@ -222,13 +223,13 @@ int main(int argc, char *argv[]){
 
         /* Update sailor moon's position */
         /* factor in collision detection for edge of map */
-        if (!((sailorMoon.pos_x + sailorMoon.x_velocity >= GAME_WIDTH) ||
-             (sailorMoon.pos_x + sailorMoon.x_velocity < 0)))
-            sailorMoon.pos_x += sailorMoon.x_velocity;
-
-        if (!((sailorMoon.pos_y + sailorMoon.y_velocity >= GAME_HEIGHT) ||
-             (sailorMoon.pos_y + sailorMoon.y_velocity < 0)))
-            sailorMoon.pos_y += sailorMoon.y_velocity;
+//        if (!((sailorMoon.pos_x + sailorMoon.x_velocity >= GAME_WIDTH) ||
+//             (sailorMoon.pos_x + sailorMoon.x_velocity < 0)))
+//            sailorMoon.pos_x += sailorMoon.x_velocity;
+//
+//        if (!((sailorMoon.pos_y + sailorMoon.y_velocity >= GAME_HEIGHT) ||
+//             (sailorMoon.pos_y + sailorMoon.y_velocity < 0)))
+//            sailorMoon.pos_y += sailorMoon.y_velocity;
 
 //        SDL_Rect *spriteWindowCoords;
 //        moveSurvivorInWindow(sailorMoon, &spriteWindowCoords);
@@ -241,8 +242,14 @@ int main(int argc, char *argv[]){
         SDL_RenderClear(renderer);
 
         /* Update player character's view camera */
-        setCameraDisplay(&sailorMoon, &playerCamera_ptr, &GameGrid_ptr, &texTileArray[0],
+        setCameraDisplay(&sailorMoon_ptr, &playerCamera_ptr, &GameGrid_ptr, &texTileArray[0],
                 renderer);
+
+        /* Print coordinates for debugging */
+        printf(" (pos_y, pos_x): (%d, %d)\n", sailorMoon.pos_y, sailorMoon.pos_x);
+        printf(" (cam_y, cam_x): (%d, %d)\n", PlayerCamera.y, PlayerCamera.x);
+        printf(" (cam_pos_y, cam_pos_x): (%d, %d)\n", PlayerCamera.spriteCoords.y,
+                PlayerCamera.spriteCoords.x);
 
         if (print_coords)
             printCoords(sailorMoon.pos_x, sailorMoon.pos_y, PlayerCamera.x,
@@ -252,9 +259,9 @@ int main(int argc, char *argv[]){
         //renderer, sprite rectangle, and window rectangle
         if (sailorMoon.orientation == EAST) 
             /* If survivor is facing right, then we'll need to use flipped sprite sheet */
-            SDL_RenderCopy(renderer, flipSpriteSheet, &rcSheetSprite, PlayerCamera.charSpriteCoords);
+            SDL_RenderCopy(renderer, flipSpriteSheet, &rcSheetSprite, &PlayerCamera.spriteCoords);
         else
-            SDL_RenderCopy(renderer, spriteSheet, &rcSheetSprite, PlayerCamera.charSpriteCoords);
+            SDL_RenderCopy(renderer, spriteSheet, &rcSheetSprite, &PlayerCamera.spriteCoords);
         SDL_RenderPresent(renderer);
 //        printf("Camera (y,x): (%d, %d)", PlayerCamera.y, PlayerCamera.x);
 

@@ -5,134 +5,136 @@
 #include "../defs.h"
 
 
-void setCameraDisplay(survivor *Player_Character, camera **Camera,
+void setCameraDisplay(survivor **Player_Character, camera **Camera,
         int **GameGrid, SDL_Texture **textureArray, SDL_Renderer *renderer) {
     /* Sets what camera displays based on the position of the player character, 
      * and what will be rendered on screen */
 
-    /* The (x,y) coordinates of the camera will be based on some offset of the 
-     * player character's position, and will depend on if the character is
-     * moving or not */
-    int x_offset = (*Camera)->x_offset;
-    int y_offset = (*Camera)->y_offset;
-
-    /* Dimensions of camera */
-    int cam_width = (*Camera)->width;
-    int cam_height = (*Camera)->height;
-
-    /* position of character in camera view port */
-    int char_posx = (*Camera)->charSpriteCoords->x;
-    int char_posy = (*Camera)->charSpriteCoords->y;
-
-    /* position of the upper left corner of camera, in
-     * pixel coordinates */
-    int cam_posx = (*Camera)->x;
-    int cam_posy = (*Camera)->y;
-
-    /* Velocity of player character */
-    int x_velocity = Player_Character->x_velocity;
-    int y_velocity = Player_Character->y_velocity;
-
-    /* Position of character in game world */
-    int world_posx = Player_Character->pos_x;
-    int world_posy = Player_Character->pos_y;
-
-    if (abs(x_velocity) > 0) {
-        /* If the character is at the edge of the offsets, move camera with player
-         * character */ 
-        if (((char_posx >= ((*Camera)->width - x_offset)) &&
-                (x_velocity > 0)) ||
-                ((char_posx <= x_offset) &&
-                (x_velocity < 0)))
-            (*Camera)->x += x_velocity; // * TILE_WIDTH;
-        else
-            (*Camera)->charSpriteCoords->x += x_velocity; // * TILE_WIDTH;
-    }
-    // If the player character is not moving and the camera is not centered on the 
-    // player, slowly drift the camera to be centered to the character's position
-    else if ((x_velocity == 0) && (char_posx > ((*Camera)->width / 2))) {
-        /* If the distance left to cover to center the camera is less than the
-         * drift value, snap the camera to the centered position */
-        /* Drift camera right */
-        if ((char_posx - ((*Camera)->width / 2)) < ((*Camera)->camera_drift)) {
-            (*Camera)->x = ((*Camera)->width / 2) + world_posx;
-            char_posx = (*Camera)->x - world_posx;
-        }
-        /* Drift camera right */
-        else {
-            (*Camera)->x += (*Camera)->camera_drift;
-            (*Camera)->charSpriteCoords->x -= (*Camera)->camera_drift;
-        }
-    }
-
-    else if ((x_velocity == 0) && (char_posx < ((*Camera)->width / 2))) {
-        /* If the distance left to cover to center the camera is less than the
-         * drift value, snap the camera to the centered position */
-        /* Drift camera right */
-        if ((((*Camera)->width / 2) - char_posx) < ((*Camera)->camera_drift)) {
-            (*Camera)->x = ((*Camera)->width / 2) + world_posx;
-            char_posx = (*Camera)->x - world_posx;
-        }
-        /* Drift camera left */
-        (*Camera)->x -=(*Camera)->camera_drift;
-        (*Camera)->charSpriteCoords->x += (*Camera)->camera_drift;
-    }
+//    /* The (x,y) coordinates of the camera will be based on some offset of the 
+//     * player character's position, and will depend on if the character is
+//     * moving or not */
+//    int x_offset = (*Camera)->x_offset;
+//    int y_offset = (*Camera)->y_offset;
+//
+//    /* Dimensions of camera */
+//    int cam_width = (*Camera)->width;
+//    int cam_height = (*Camera)->height;
+//
+//    /* position of character in camera view port */
+//    int char_posx = (*Camera)->charSpriteCoords->x;
+//    int char_posy = (*Camera)->charSpriteCoords->y;
+//
+//    /* position of the upper left corner of camera, in
+//     * pixel coordinates */
+//    int cam_posx = (*Camera)->x;
+//    int cam_posy = (*Camera)->y;
+//
+//    /* Velocity of player character */
+//    int x_velocity = Player_Character->x_velocity;
+//    int y_velocity = Player_Character->y_velocity;
+//
+//    /* Position of character in game world */
+//    int world_posx = Player_Character->pos_x;
+//    int world_posy = Player_Character->pos_y;
+//
+//    if (abs(x_velocity) > 0) {
+//        /* If the character is at the edge of the offsets, move camera with player
+//         * character */ 
+//        if (((char_posx >= ((*Camera)->width - x_offset)) &&
+//                (x_velocity > 0)) ||
+//                ((char_posx <= x_offset) &&
+//                (x_velocity < 0)))
+//            (*Camera)->x += x_velocity; // * TILE_WIDTH;
+//        else
+//            (*Camera)->charSpriteCoords->x += x_velocity; // * TILE_WIDTH;
+//    }
+//    // If the player character is not moving and the camera is not centered on the 
+//    // player, slowly drift the camera to be centered to the character's position
+//    else if ((x_velocity == 0) && (char_posx > ((*Camera)->width / 2))) {
+//        /* If the distance left to cover to center the camera is less than the
+//         * drift value, snap the camera to the centered position */
+//        /* Drift camera right */
+//        if ((char_posx - ((*Camera)->width / 2)) < ((*Camera)->camera_drift)) {
+//            (*Camera)->x = ((*Camera)->width / 2) + world_posx;
+//            char_posx = (*Camera)->x - world_posx;
+//        }
+//        /* Drift camera right */
+//        else {
+//            (*Camera)->x += (*Camera)->camera_drift;
+//            (*Camera)->charSpriteCoords->x -= (*Camera)->camera_drift;
+//        }
+//    }
+//
+//    else if ((x_velocity == 0) && (char_posx < ((*Camera)->width / 2))) {
+//        /* If the distance left to cover to center the camera is less than the
+//         * drift value, snap the camera to the centered position */
+//        /* Drift camera right */
+//        if ((((*Camera)->width / 2) - char_posx) < ((*Camera)->camera_drift)) {
+//            (*Camera)->x = ((*Camera)->width / 2) + world_posx;
+//            char_posx = (*Camera)->x - world_posx;
+//        }
+//        /* Drift camera left */
+//        (*Camera)->x -=(*Camera)->camera_drift;
+//        (*Camera)->charSpriteCoords->x += (*Camera)->camera_drift;
+//    }
 
 //    // Otherwise, if player character is still and centered, perform a 
 //    // sanity check to see if camera reflects position in world, and adjust accordingly
 //    // if not
 //    else
 
-    if (abs(y_velocity) > 0) {
 
-        /* If the character is at the edge of the offsets, move camera with player
-         * character */ 
-        if (((char_posy >= ((*Camera)->height - y_offset)) &&
-                (y_velocity > 0)) ||
-                ((char_posy <= y_offset) &&
-                 (y_velocity < 0)))
+//    if (abs(y_velocity) > 0) {
+//
+//        /* If the character is at the edge of the offsets, move camera with player
+//         * character */ 
+//        if (((char_posy >= ((*Camera)->height - y_offset)) &&
+//                (y_velocity > 0)) ||
+//                ((char_posy <= y_offset) &&
+//                 (y_velocity < 0)))
+//
+////           (*Camera)->y = (world_posy * TILE_HEIGHT) + (cam_height / 2);
+//            (*Camera)->y += y_velocity; // * TILE_HEIGHT
+//        else
+//           (*Camera)->charSpriteCoords->y += y_velocity; // * TILE_WIDTH;
+//    }
+//    
+//    else if ((y_velocity == 0) && (char_posy > ((*Camera)->height / 2))) {
+//        /* If the distance left to cover to center the camera is less than the
+//         * drift value, snap the camera to the centered position */
+//        /* Drift camera right */
+//        if ((char_posy - ((*Camera)->height / 2)) < ((*Camera)->camera_drift)) {
+//            (*Camera)->y = ((*Camera)->height / 2) + world_posy;
+//            char_posy = (*Camera)->y - world_posy;
+//        }
+//        else {
+//        (*Camera)->y += (*Camera)->camera_drift;
+//        (*Camera)->charSpriteCoords->y -= (*Camera)->camera_drift;
+//        }
+//    }
+//
+//    else if ((y_velocity == 0) && (char_posy < ((*Camera)->height / 2))) {
+//        /* If the distance left to cover to center the camera is less than the
+//         * drift value, snap the camera to the centered position */
+//        /* Drift camera right */
+//        if ((((*Camera)->height / 2) - char_posy) < ((*Camera)->camera_drift)) {
+//            (*Camera)->y = ((*Camera)->height / 2) + world_posy;
+//            char_posy = (*Camera)->y - world_posy;
+//        }
+//        /* Drift camera left */
+//        else {
+//            (*Camera)->y -=(*Camera)->camera_drift;
+//            (*Camera)->charSpriteCoords->y += (*Camera)->camera_drift;
+//        }
+//    }
 
-//           (*Camera)->y = (world_posy * TILE_HEIGHT) + (cam_height / 2);
-            (*Camera)->y += y_velocity; // * TILE_HEIGHT
-        else
-           (*Camera)->charSpriteCoords->y += y_velocity; // * TILE_WIDTH;
-    }
-    
-    else if ((y_velocity == 0) && (char_posy > ((*Camera)->height / 2))) {
-        /* If the distance left to cover to center the camera is less than the
-         * drift value, snap the camera to the centered position */
-        /* Drift camera right */
-        if ((char_posy - ((*Camera)->height / 2)) < ((*Camera)->camera_drift)) {
-            (*Camera)->y = ((*Camera)->height / 2) + world_posy;
-            char_posy = (*Camera)->y - world_posy;
-        }
-        else {
-        (*Camera)->y += (*Camera)->camera_drift;
-        (*Camera)->charSpriteCoords->y -= (*Camera)->camera_drift;
-        }
-    }
-
-    else if ((y_velocity == 0) && (char_posy < ((*Camera)->height / 2))) {
-        /* If the distance left to cover to center the camera is less than the
-         * drift value, snap the camera to the centered position */
-        /* Drift camera right */
-        if ((((*Camera)->height / 2) - char_posy) < ((*Camera)->camera_drift)) {
-            (*Camera)->y = ((*Camera)->height / 2) + world_posy;
-            char_posy = (*Camera)->y - world_posy;
-        }
-        /* Drift camera left */
-        else {
-            (*Camera)->y -=(*Camera)->camera_drift;
-            (*Camera)->charSpriteCoords->y += (*Camera)->camera_drift;
-        }
-    }
+    /* Calculate appropiate camera coordinates */
+    calculateCameraCoords(Camera, Player_Character);
 
     // Render tiles to map based on the camera's coordinates
-    SDL_Rect renderRect; /* Rectangle to keep track of the portion of the camera we are rendering in a given pass */
+    SDL_Rect renderRect; /* Rectangle to keep track of the grid we are rendering */
     renderRect.w = TILE_WIDTH;
     renderRect.h = TILE_HEIGHT;
-//    renderRect.x = 0;
-//    renderRect.y =(*Camera)->height;
 
     /* Retrieve grid coords of top left corner of camera view */
     int grid_x = floor((*Camera)->x / TILE_WIDTH);
@@ -188,4 +190,116 @@ void renderTile(int col, int row, int **GameGrid,
     // Render texture on game window
     SDL_RenderCopy(renderer, texture, NULL, renderRect);
 }
+
+void calculateCameraCoords(camera **Camera, survivor **PlayerCharacter) {
+
+    // Calculate offsets between internally tracked position of character in the world 
+    // and the coordinates of the character in the view port as well as the coordinates
+    // of the camera itself
+    int camera_height = (*Camera)->height;
+    int camera_width = (*Camera)->width;
+    int cam_x = (*Camera)->x;
+    int cam_y = (*Camera)->y;
+    int cam_xoffset = (*Camera)->x_offset;
+    int cam_yoffset = (*Camera)->y_offset;
+    int camera_drift = (*Camera)->camera_drift;
+
+    int char_x = (*Camera)->spriteCoords.x;
+    int char_y = (*Camera)->spriteCoords.y;
+
+    int x_velocity = (*PlayerCharacter)->x_velocity;
+    int y_velocity = (*PlayerCharacter)->y_velocity;
+
+    if (x_velocity > 0 && ((camera_width - char_x) > cam_xoffset)) 
+       /* If the position of the character in the viewport is still outside
+        * the bounds of the edge offset, move the character in the viewport
+        * but not the camera itself */
+        (*Camera)->spriteCoords.x += x_velocity;
+    
+//    else if (x_velocity < 0 && (char_x <= cam_xoffset))
+//        (*Camera)->spriteCoords.x += x_velocity;
+    else if (x_velocity < 0 && (char_x > cam_xoffset))
+        (*Camera)->spriteCoords.x += x_velocity;
+
+    else if (abs(x_velocity) > 0 && 
+            ((camera_width - char_x <= cam_xoffset) ||
+             (char_x <= cam_xoffset))) {
+        /* If the position of the character in the viewporst is inside
+         * the bounds of the edge offset, move the camera coordinates,
+         * but not the coordinates of the character in the view port */
+        (*Camera)->x += x_velocity;
+    }
+
+    else if ((x_velocity == 0) && (char_x != camera_height / 2)) {
+
+        if (abs(char_x - (camera_width / 2)) < camera_drift) {
+            /* If the difference between the char's position and the centroid
+             * is less than the camera's drift, snap the character to the centroid */
+            (*Camera)->spriteCoords.x = camera_width / 2;
+        }
+
+        else if (char_x - (camera_width / 2) < 0) {
+            (*Camera)->x -= camera_drift;
+            (*Camera)->spriteCoords.x += camera_drift;
+        }
+        
+        else {
+            (*Camera)->x += camera_drift;
+            (*Camera)->spriteCoords.x -= camera_drift;
+        }
+
+    }
+
+    if (y_velocity > 0 && (camera_height - char_y > cam_yoffset)) {
+       /* If the position of the character in the viewport is still outside
+        * the bounds of the edge offset, move the character in the viewport
+        * but not the camera itself */
+        (*Camera)->spriteCoords.y += y_velocity;
+
+    }
+
+    else if (y_velocity < 0 && (char_y > cam_yoffset))
+        (*Camera)->spriteCoords.y += y_velocity;
+
+    else if (abs(y_velocity) > 0 && ((abs(camera_height - char_y) <= cam_yoffset) ||
+                (char_y <= cam_yoffset))) {
+        /* If the position of the character in the viewporst is inside
+         * the bounds of the edge offset, move the camera coordinates,
+         * but not the coordinates of the character in the view port */
+        (*Camera)->y += y_velocity;
+
+    }
+
+    else if ((y_velocity == 0) && (char_y != camera_height / 2)) {
+
+        if (abs(char_y - (camera_height / 2)) < camera_drift) {
+            /* If the difference between the char's position and the centroid
+             * is less than the camera's drift, snap the character to the centroid */
+            char_y = camera_height / 2;
+        }
+
+        else if (char_y - (camera_height / 2) < 0) {
+            (*Camera)->y -= camera_drift;
+            (*Camera)->spriteCoords.y += camera_drift;
+        }
+        
+        else  {
+            (*Camera)->y += camera_drift;
+            (*Camera)->spriteCoords.y -= camera_drift;
+        }
+
+    }
+
+    (*PlayerCharacter)->pos_x = cam_x + char_x;
+    (*PlayerCharacter)->pos_y = cam_y - char_y;
+}
+
+
+
+             
+
+
+
+
+
 

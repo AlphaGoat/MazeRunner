@@ -63,18 +63,24 @@ int InitMapTerrain(int **GameGrid) {
         for (int col = 0; col < GAME_WIDTH; col++) {
             int tile_choice = rand() % 3;
             switch(tile_choice) {
-                case 0:
-                    *((*GameGrid) + (row * GAME_HEIGHT) + col) = grass_tile;
-                    break;
-                case 1:
-                    *((*GameGrid) + (row * GAME_HEIGHT) + col) = dirt_tile;
-                    break;
-                case 2:
-                    *((*GameGrid) + (row * GAME_HEIGHT) + col) = wall_tile;
-                    break;
-                default:
-                    *((*GameGrid) + (row * GAME_HEIGHT) + col) = grass_tile;
-                    break;
+//                case 0:
+//                    *((*GameGrid) + (row * GAME_HEIGHT) + col) = grass_tile;
+//                    break;
+//                case 1:
+//                    *((*GameGrid) + (row * GAME_HEIGHT) + col) = dirt_tile;
+//                    break;
+//                case 2:
+//                    *((*GameGrid) + (row * GAME_HEIGHT) + col) = wall_tile;
+//                    break;
+//                default:
+//                    *((*GameGrid) + (row * GAME_HEIGHT) + col) = grass_tile;
+//                    break;
+                    case 0:
+                    case 1:
+                    case 3:
+                        *((*GameGrid) + (row * GAME_HEIGHT) + col) = grass_tile;
+                        break;
+
             }
         }
     }
