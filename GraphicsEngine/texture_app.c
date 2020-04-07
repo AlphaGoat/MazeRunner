@@ -8,67 +8,67 @@
 #include "../GameMechanics/stateManagement.h"
 
 
-void getSpriteCoords(survivor *character, int offset, SDL_Rect *spriteRect, 
-        sprite_render_info *sprite_coords) {
+void getSpriteCoords(survivor *character, int offset, SDL_Rect *spriteRect) {
     /* fill input sprite sheet rectangle with coordinates of corresponding
      * character sprite 
      * :param spriteRect:      pointer to rectangle providing dims of one character sprite
      *                         in sheet
      * :param spriteSheetDims: pointer to dimensions of sprite sheet
      * */
+    sprite_render_info sprite_coords = character->SpriteRenderInfo;
 
     /* Get the width and height of one sprite in that sprite sheet */
     int char_width = spriteRect->w;
     int char_height = spriteRect->h;
     /* Sprites for character standing still */
-    if (character->x_velocity == 0 && character->y_velocity == 0) {
+    if (!sprite_coords.xmotion_flag && !sprite_coords.ymotion_flag) {
         switch(character->orientation) {
             case WEST:
-                spriteRect->y = sprite_coords->sprite_height + sprite_coords->y_offset;
+                spriteRect->y = sprite_coords.sprite_height + sprite_coords.y_offset;
                 spriteRect->x = 0;
                 break;
             /* In the case of WEST orientation, these rectangle coords
              * are actually going to apply to the mirror transform of the
              * sprite sheet */
             case EAST:
-                spriteRect->y = sprite_coords->sprite_height + sprite_coords->y_offset;
-                spriteRect->x =  sprite_coords->sheet_width - sprite_coords->sprite_width;
+                spriteRect->y = sprite_coords.sprite_height + sprite_coords.y_offset;
+                spriteRect->x =  sprite_coords.sheet_width - sprite_coords.sprite_width;
                 break;
             case SOUTH:
-                spriteRect->y = sprite_coords->y_offset;
+                spriteRect->y = sprite_coords.y_offset;
                 spriteRect->x = 0;
                 break;
             case NORTH:
-                spriteRect->y = (2 * sprite_coords->sprite_height) + sprite_coords->y_offset;
+                spriteRect->y = (2 * sprite_coords.sprite_height) + sprite_coords.y_offset;
                 spriteRect->x = 0;
                 break;
         }
     }
 
-    else if (character->x_velocity != 0 || character->y_velocity != 0) {
-        int frame_num = (SDL_GetTicks() / FRAME_DELAY) % sprite_coords->num_motion_frames;
+    else if (sprite_coords.xmotion_flag || sprite_coords.ymotion_flag) {
+        int frame_num = (SDL_GetTicks() / FRAME_DELAY) % sprite_coords.num_motion_frames;
         switch(character->orientation) {
             case WEST:
-                spriteRect->y = sprite_coords->sprite_height + sprite_coords->y_offset;
-                spriteRect->x = (1 + frame_num) * sprite_coords->sprite_width;
+                spriteRect->y = sprite_coords.sprite_height + sprite_coords.y_offset;
+                spriteRect->x = (1 + frame_num) * sprite_coords.sprite_width;
                 break;
 
             case EAST:
-                spriteRect->y = sprite_coords->sprite_height + sprite_coords->y_offset;
-                spriteRect->x = sprite_coords->sheet_width - 
-                    ((2 + frame_num) * sprite_coords->sprite_width);
+                spriteRect->y = sprite_coords.sprite_height + sprite_coords.y_offset;
+                spriteRect->x = sprite_coords.sheet_width - 
+                    ((2 + frame_num) * sprite_coords.sprite_width);
                 break;
 
             case SOUTH:
                 frame_num -=  2;
-                spriteRect->y = sprite_coords->y_offset;
-                spriteRect->x = (1 + frame_num) * sprite_coords->sprite_width;
+                spriteRect->y = sprite_coords.y_offset;
+                spriteRect->x = (1 + frame_num) * sprite_coords.sprite_width;
                 break;
 
             case NORTH:
                 frame_num -= 2;
-                spriteRect->y = (2 * sprite_coords->sprite_height) + sprite_coords->y_offset;
-                spriteRect->x = (1 + frame_num) * sprite_coords->sprite_width;
+                spriteRect->y = (2 * sprite_coords.sprite_height) + sprite_coords.y_offset;
+                spriteRect->x = (1 + frame_num) * sprite_coords.sprite_width;
         }
     }
 }

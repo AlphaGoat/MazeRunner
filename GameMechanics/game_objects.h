@@ -35,7 +35,7 @@ typedef struct Survivor {
 
     /* Pointer to appropiate sprite sheet structure
      * containing rendering information for character */
-    sprite_render_info *SpriteRenderInfo;
+    sprite_render_info SpriteRenderInfo;
 
 } survivor;
 

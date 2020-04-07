@@ -5,6 +5,8 @@
 
 #include <SDL2/SDL.h>
 
+typedef struct Survivor survivor;
+
 typedef struct SpriteRenderInfo {
     int y_offset; /* Defines offset from top of sprite sheet */
     int x_offset;
@@ -23,7 +25,14 @@ typedef struct SpriteRenderInfo {
 
     /* Number of movement frames per char orientation in spreadsheet */
     int num_motion_frames;
+
+    /* Flag specifying whether character sprite is in motion
+     * (not necessarily consistent with motion on world map) */
+    int xmotion_flag;
+    int ymotion_flag;
 } sprite_render_info;
+
+void getSpriteCoords(survivor *character, int offset,  SDL_Rect *spriteRect); 
 
 SDL_Texture * InitializeGreenTexture(SDL_Renderer *renderer);
 

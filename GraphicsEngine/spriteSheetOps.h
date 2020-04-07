@@ -8,8 +8,8 @@
 typedef struct Survivor survivor;
 typedef struct SS_Coordset ss_coord;
 
-void getSpriteCoords(survivor *character, int offset, SDL_Rect *spriteRect, 
-        ss_coord *sprite_coords);
+//void getSpriteCoords(survivor *character, int offset, SDL_Rect *spriteRect, 
+//        ss_coord *sprite_coords);
 
 SDL_Surface *horizMirrReflectPixelMap(SDL_Surface *pixelMap);
 

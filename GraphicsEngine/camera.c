@@ -4,129 +4,10 @@
 #include "camera.h"
 #include "../defs.h"
 
-
 void setCameraDisplay(survivor **Player_Character, camera **Camera,
         int **GameGrid, SDL_Texture **textureArray, SDL_Renderer *renderer) {
     /* Sets what camera displays based on the position of the player character, 
      * and what will be rendered on screen */
-
-//    /* The (x,y) coordinates of the camera will be based on some offset of the 
-//     * player character's position, and will depend on if the character is
-//     * moving or not */
-//    int x_offset = (*Camera)->x_offset;
-//    int y_offset = (*Camera)->y_offset;
-//
-//    /* Dimensions of camera */
-//    int cam_width = (*Camera)->width;
-//    int cam_height = (*Camera)->height;
-//
-//    /* position of character in camera view port */
-//    int char_posx = (*Camera)->charSpriteCoords->x;
-//    int char_posy = (*Camera)->charSpriteCoords->y;
-//
-//    /* position of the upper left corner of camera, in
-//     * pixel coordinates */
-//    int cam_posx = (*Camera)->x;
-//    int cam_posy = (*Camera)->y;
-//
-//    /* Velocity of player character */
-//    int x_velocity = Player_Character->x_velocity;
-//    int y_velocity = Player_Character->y_velocity;
-//
-//    /* Position of character in game world */
-//    int world_posx = Player_Character->pos_x;
-//    int world_posy = Player_Character->pos_y;
-//
-//    if (abs(x_velocity) > 0) {
-//        /* If the character is at the edge of the offsets, move camera with player
-//         * character */ 
-//        if (((char_posx >= ((*Camera)->width - x_offset)) &&
-//                (x_velocity > 0)) ||
-//                ((char_posx <= x_offset) &&
-//                (x_velocity < 0)))
-//            (*Camera)->x += x_velocity; // * TILE_WIDTH;
-//        else
-//            (*Camera)->charSpriteCoords->x += x_velocity; // * TILE_WIDTH;
-//    }
-//    // If the player character is not moving and the camera is not centered on the 
-//    // player, slowly drift the camera to be centered to the character's position
-//    else if ((x_velocity == 0) && (char_posx > ((*Camera)->width / 2))) {
-//        /* If the distance left to cover to center the camera is less than the
-//         * drift value, snap the camera to the centered position */
-//        /* Drift camera right */
-//        if ((char_posx - ((*Camera)->width / 2)) < ((*Camera)->camera_drift)) {
-//            (*Camera)->x = ((*Camera)->width / 2) + world_posx;
-//            char_posx = (*Camera)->x - world_posx;
-//        }
-//        /* Drift camera right */
-//        else {
-//            (*Camera)->x += (*Camera)->camera_drift;
-//            (*Camera)->charSpriteCoords->x -= (*Camera)->camera_drift;
-//        }
-//    }
-//
-//    else if ((x_velocity == 0) && (char_posx < ((*Camera)->width / 2))) {
-//        /* If the distance left to cover to center the camera is less than the
-//         * drift value, snap the camera to the centered position */
-//        /* Drift camera right */
-//        if ((((*Camera)->width / 2) - char_posx) < ((*Camera)->camera_drift)) {
-//            (*Camera)->x = ((*Camera)->width / 2) + world_posx;
-//            char_posx = (*Camera)->x - world_posx;
-//        }
-//        /* Drift camera left */
-//        (*Camera)->x -=(*Camera)->camera_drift;
-//        (*Camera)->charSpriteCoords->x += (*Camera)->camera_drift;
-//    }
-
-//    // Otherwise, if player character is still and centered, perform a 
-//    // sanity check to see if camera reflects position in world, and adjust accordingly
-//    // if not
-//    else
-
-
-//    if (abs(y_velocity) > 0) {
-//
-//        /* If the character is at the edge of the offsets, move camera with player
-//         * character */ 
-//        if (((char_posy >= ((*Camera)->height - y_offset)) &&
-//                (y_velocity > 0)) ||
-//                ((char_posy <= y_offset) &&
-//                 (y_velocity < 0)))
-//
-////           (*Camera)->y = (world_posy * TILE_HEIGHT) + (cam_height / 2);
-//            (*Camera)->y += y_velocity; // * TILE_HEIGHT
-//        else
-//           (*Camera)->charSpriteCoords->y += y_velocity; // * TILE_WIDTH;
-//    }
-//    
-//    else if ((y_velocity == 0) && (char_posy > ((*Camera)->height / 2))) {
-//        /* If the distance left to cover to center the camera is less than the
-//         * drift value, snap the camera to the centered position */
-//        /* Drift camera right */
-//        if ((char_posy - ((*Camera)->height / 2)) < ((*Camera)->camera_drift)) {
-//            (*Camera)->y = ((*Camera)->height / 2) + world_posy;
-//            char_posy = (*Camera)->y - world_posy;
-//        }
-//        else {
-//        (*Camera)->y += (*Camera)->camera_drift;
-//        (*Camera)->charSpriteCoords->y -= (*Camera)->camera_drift;
-//        }
-//    }
-//
-//    else if ((y_velocity == 0) && (char_posy < ((*Camera)->height / 2))) {
-//        /* If the distance left to cover to center the camera is less than the
-//         * drift value, snap the camera to the centered position */
-//        /* Drift camera right */
-//        if ((((*Camera)->height / 2) - char_posy) < ((*Camera)->camera_drift)) {
-//            (*Camera)->y = ((*Camera)->height / 2) + world_posy;
-//            char_posy = (*Camera)->y - world_posy;
-//        }
-//        /* Drift camera left */
-//        else {
-//            (*Camera)->y -=(*Camera)->camera_drift;
-//            (*Camera)->charSpriteCoords->y += (*Camera)->camera_drift;
-//        }
-//    }
 
     /* Calculate appropiate camera coordinates */
     calculateCameraCoords(Camera, Player_Character);
@@ -139,11 +20,6 @@ void setCameraDisplay(survivor **Player_Character, camera **Camera,
     /* Retrieve grid coords of top left corner of camera view */
     int grid_x = floor((*Camera)->x / TILE_WIDTH);
     int grid_y = floor((*Camera)->y / TILE_HEIGHT);
-
-//    if ((grid_x != 120) && (grid_y != 90)) {
-        //printf("grid_x: %d\n", grid_x);
-        //printf("grid_y: %d\n", grid_y);
- //   }
 
     /* height of camera view in tiles */
     int cam_tile_height = floor((*Camera)->height / TILE_HEIGHT);

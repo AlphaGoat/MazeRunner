@@ -28,15 +28,6 @@ int main(int argc, char *argv[]){
     /* seed random number generator */
     srand((unsigned)time(NULL));
 
-    sprite_render_info sailor_moon_sprite_dims;
-    sailor_moon_sprite_dims.y_offset = 5;
-    sailor_moon_sprite_dims.x_offset = 0;
-    sailor_moon_sprite_dims.sheet_height = 900;
-    sailor_moon_sprite_dims.sheet_width = 386;
-    sailor_moon_sprite_dims.sprite_height = 900 / 20;
-    sailor_moon_sprite_dims.sprite_width = 386 / 18;
-    sailor_moon_sprite_dims.num_motion_frames = 4;
-
     int GameGrid[GAME_WIDTH * GAME_HEIGHT];
     int *GameGrid_ptr = GameGrid;
     /* Initialize Game Grid */
@@ -53,7 +44,15 @@ int main(int argc, char *argv[]){
     sailorMoon.y_velocity = 0;
     sailorMoon.orientation = SOUTH;
     sailorMoon.health_state = full_health;
-    sailorMoon.SpriteRenderInfo = &sailor_moon_sprite_dims;
+    sailorMoon.SpriteRenderInfo.y_offset = 5;
+    sailorMoon.SpriteRenderInfo.x_offset = 0;
+    sailorMoon.SpriteRenderInfo.sheet_height = 900;
+    sailorMoon.SpriteRenderInfo.sheet_width = 386;
+    sailorMoon.SpriteRenderInfo.sprite_height = 900 / 20;
+    sailorMoon.SpriteRenderInfo.sprite_width = 386 / 18;
+    sailorMoon.SpriteRenderInfo.num_motion_frames = 4;
+    sailorMoon.SpriteRenderInfo.xmotion_flag = 0;
+    sailorMoon.SpriteRenderInfo.ymotion_flag = 0;
 
     /* Pointer to sailor moon object */
     survivor *sailorMoon_ptr;
@@ -142,6 +141,7 @@ int main(int argc, char *argv[]){
 //                                    sailorMoon.pos_y, &GameGrid_ptr))
                         sailorMoon.x_velocity = -1;
                         sailorMoon.orientation = WEST;
+                        sailorMoon.SpriteRenderInfo.xmotion_flag = 1;
 //                        print_coords = 1;
                         break;
                     case SDLK_RIGHT:
@@ -150,6 +150,7 @@ int main(int argc, char *argv[]){
 //                                    sailorMoon.pos_y, &GameGrid_ptr))
                         sailorMoon.x_velocity = 1;
                         sailorMoon.orientation = EAST;
+                        sailorMoon.SpriteRenderInfo.xmotion_flag = 1;
  //                       print_coords = 1;
                         break;
                     case SDLK_DOWN:
@@ -158,6 +159,7 @@ int main(int argc, char *argv[]){
 //                                    sailorMoon.pos_y + 1, &GameGrid_ptr))
                         sailorMoon.y_velocity = 1;
                         sailorMoon.orientation = SOUTH;
+                        sailorMoon.SpriteRenderInfo.ymotion_flag = 1;
 //                        print_coords = 1;
                         break;
                     case SDLK_UP:
@@ -166,6 +168,7 @@ int main(int argc, char *argv[]){
 //                                    sailorMoon.pos_y - 1, &GameGrid_ptr))
                         sailorMoon.y_velocity = -1;
                         sailorMoon.orientation = NORTH;
+                        sailorMoon.SpriteRenderInfo.ymotion_flag = 1;
 //                        print_coords = 1;
                         break;
                     default:
@@ -181,26 +184,34 @@ int main(int argc, char *argv[]){
                 switch(input.key.keysym.sym) {
                     case SDLK_LEFT:
                     case SDLK_a:
-                        if (sailorMoon.x_velocity < 0)
+                        if (sailorMoon.x_velocity < 0) {
                             sailorMoon.x_velocity = 0;
+                            sailorMoon.SpriteRenderInfo.xmotion_flag = 0;
+                        }
 //                        print_coords = 0;
                         break;
                     case SDLK_RIGHT:
                     case SDLK_d:
-                        if (sailorMoon.x_velocity > 0)
+                        if (sailorMoon.x_velocity > 0) {
                             sailorMoon.x_velocity = 0;
+                            sailorMoon.SpriteRenderInfo.xmotion_flag = 0;
+                        }
 //                        print_coords = 0;
                         break;
                     case SDLK_DOWN:
                     case SDLK_s:
-                        if (sailorMoon.y_velocity > 0)
+                        if (sailorMoon.y_velocity > 0) {
                             sailorMoon.y_velocity = 0;
+                            sailorMoon.SpriteRenderInfo.ymotion_flag = 0;
+                        }
 //                        print_coords = 0;
                         break;
                     case SDLK_UP:
                     case SDLK_w:
-                        if (sailorMoon.y_velocity < 0)
+                        if (sailorMoon.y_velocity < 0) {
                             sailorMoon.y_velocity = 0;
+                            sailorMoon.SpriteRenderInfo.ymotion_flag = 0;
+                        }
 //                        print_coords = 0;
                         break;
                     default:
@@ -219,7 +230,7 @@ int main(int argc, char *argv[]){
 
         /* Determine what set of sprite animations to use */
         /* When sedentary */
-        getSpriteCoords(&sailorMoon, 5, &rcSheetSprite, sailorMoon.SpriteRenderInfo);
+        getSpriteCoords(&sailorMoon, 5, &rcSheetSprite);
 
         /* Update sailor moon's position */
         /* factor in collision detection for edge of map */
