@@ -29,6 +29,10 @@ typedef struct Camera {
 
 } camera;
 
+camera  InitializeCamera(int start_posx, int start_posy,
+        int height, int width, int x_offset, int y_offset,
+        int camera_drift, int char_width, int char_height);
+
 void setCameraDisplay(survivor **Player_Character, camera **Camera,
         int **GameGrid, SDL_Texture **textureArray, SDL_Renderer *renderer);
 
@@ -36,5 +40,11 @@ void renderTile(int col, int row, int **GameGrid,
         SDL_Texture **textureArray, SDL_Rect *renderRect, SDL_Renderer *renderer);
 
 void calculateCameraCoords(camera **Camera, survivor **Player_Character);
+
+int renderObject(render_info *objectRenderInfo, camera *Camera, SDL_Texture *object_texture,
+        SDL_Renderer *renderer);
+
+int isObjectVisible(camera *Camera, int obj_posx, int obj_posy, int obj_width,
+        int obj_height);
 
 #endif

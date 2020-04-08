@@ -5,6 +5,12 @@
 
 #include <SDL2/SDL.h>
 
+
+enum TextureTypes {
+    enumGeneratorTexture,
+};
+
+
 typedef struct Survivor survivor;
 
 typedef struct SpriteRenderInfo {
@@ -32,9 +38,34 @@ typedef struct SpriteRenderInfo {
     int ymotion_flag;
 } sprite_render_info;
 
+/* Rendering info structure for nonanimated objects */
+typedef struct RenderInfo {
+    int sheet_height;
+    int sheet_width;
+
+    /* In game dimensions */
+    int height;
+    int width;
+
+    /* Position of upper-left most corner of render */
+    int x;
+    int y;
+
+    /* Multiplication factor to convert in-game dimensions
+     * to image dimensions */
+    int factor_x;
+    int factor_y;
+
+    /* flag detailing what texture to load */
+    int texture_flag;
+
+} render_info;
+
 void getSpriteCoords(survivor *character, int offset,  SDL_Rect *spriteRect); 
 
 SDL_Texture * InitializeGreenTexture(SDL_Renderer *renderer);
+
+SDL_Texture * initializeGeneratorTexture(SDL_Renderer *renderer);
 
 int initializeTileTextures(SDL_Texture **texture_array, SDL_Renderer *renderer);
 

@@ -51,8 +51,8 @@ game_state * InitGameState(int map_height, int map_width, int num_generators) {
     /* Recieve pointer to initialized generators */
     generator *gen_array_ptr;
     int bound_gen_radius = 50;
-    gen_array_ptr = InitGenerators(num_generators, map_height, map_width,
-            bound_gen_radius, GameGrid);
+//    gen_array_ptr = InitGenerators(num_generators, 
+//            bound_gen_radius, GameGrid);
     
     return game_state_ptr;
 };
@@ -88,52 +88,26 @@ int InitMapTerrain(int **GameGrid) {
 }
 
 /* Function to initialize and randomly place generators in world map */
-generator * InitGenerators(int num_generators, int map_height, int map_width,
-        int bound_gen_radius, int **GameGrid) {
+generator InitGenerators(int x, int y) {
 
-    generator Generator_Array[num_generators];
-    for (int i = 0; i < num_generators; i++) {
-        generator curr_generator;
-        curr_generator.fixed = 0;
-        curr_generator.completion_bar = 100;
-        /* Randomly place generators in a manner so that no two
-         * generators are too close to each other */
+    generator curr_generator;
+    curr_generator.pos_x = x;
+    curr_generator.pos_y = y;
+    curr_generator.fixed = 0;
+    curr_generator.completion_bar = 100;
+
+//    render_info genRenderInfo;
+//    genRenderInfo.x = x;
+//    genRenderInfo.y = y;
+//    genRenderInfo.sheet_width = 582;
+//    genRenderInfo.sheet_height = 612;
+//    genRenderInfo.width = 582 / 10;
+//    genRenderInfo.height = 612 / 10;
+//    genRenderInfo.factor_x = 10;
+//    genRenderInfo.factor_y = 10;
+//    genRenderInfo.texture_flag = enumGeneratorTexture; 
         
-        int gen_placed = 0;
-        while (!gen_placed) {
-            int y = rand() % map_height;
-            int x = rand() % map_width;
-
-            /* Check to see that the generator isn't being placed in an
-             * incompatible tile */
-            if (checkForCollision(x, y, GameGrid))
-                    continue;
-
-            /* Check to see that the proposed x, y are not within
-             * the boundary radius of another generator */
-            for (int j = 0; j < i; j++) {
-                int check_x = Generator_Array[j].pos_x;
-                int check_y = Generator_Array[j].pos_y;
-
-                if (fabs( pow((check_x - x), 2) - 
-                            pow((check_y - y), 2)) >  bound_gen_radius) {
-                    curr_generator.pos_x = x;
-                    curr_generator.pos_y = y;
-                    gen_placed = 1;
-                    break;
-                }
-            }
-        }
-
-        /* Place newly initialized generator in array */
-        Generator_Array[i] = curr_generator;
-
-    }
-
-    generator *gen_array_ptr;
-    gen_array_ptr = Generator_Array;
-
-    return gen_array_ptr;
+    return curr_generator;
 }
 
 survivor * InitSurvivors(int num_survivors, int map_height, int map_width);

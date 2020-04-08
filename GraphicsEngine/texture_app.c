@@ -7,6 +7,8 @@
 #include "../GameMechanics/gameGrid.h"
 #include "../GameMechanics/stateManagement.h"
 
+SDL_Texture *Texture_Array;
+
 
 void getSpriteCoords(survivor *character, int offset, SDL_Rect *spriteRect) {
     /* fill input sprite sheet rectangle with coordinates of corresponding
@@ -174,6 +176,26 @@ int initializeTileTextures(SDL_Texture **texture_array,
     SDL_FreeSurface(starbkgd_surface);
 
     return 1;
+}
+
+/* Initialize render for Generator */
+SDL_Texture * initializeGeneratorTexture(SDL_Renderer *renderer) {
+
+    IMG_Init(IMG_INIT_PNG | IMG_INIT_JPG);
+
+    SDL_Surface *generator_surface = NULL;
+    SDL_Texture *generator_texture;
+
+    generator_surface = IMG_Load("/home/alphagoat/Projects/DBD2EB/textures/generator.jpeg");
+    if (generator_surface == NULL)
+        printf("Generator texture could not be loaded\n");
+
+    SDL_SetColorKey(generator_surface, SDL_TRUE, SDL_MapRGB(
+                generator_surface->format, 255, 255, 255)); 
+    generator_texture = SDL_CreateTextureFromSurface(renderer, generator_surface);
+    SDL_FreeSurface(generator_surface);
+
+    return generator_texture;
 }
 
 SDL_Texture * InitializeGreenTexture(SDL_Renderer *renderer) {

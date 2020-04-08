@@ -3,6 +3,8 @@
 
 #include <time.h>
 
+#include "../defs.h"
+
 #include "../GraphicsEngine/texture_app.h"
 
 typedef struct Survivor {
@@ -32,10 +34,15 @@ typedef struct Survivor {
 
     time_t idle_timer; /* timer for how long the character has been idle */
 
+    int collision_quadrant; /* Specifies which collision quadrant character is in */
+                            /* Will only check for collision with objects in quadrant */
 
     /* Pointer to appropiate sprite sheet structure
      * containing rendering information for character */
     sprite_render_info SpriteRenderInfo;
+
+    /* Arrays with flags detailing what objects are visible */
+    int *visible_generators;
 
 } survivor;
 
@@ -64,6 +71,11 @@ typedef struct Generator {
      * status the generator is. When this
      * hits 0, the generator is 'fixed' */
     int completion_bar;
+
+    int collision_quadrant;
+
+//    render_info *renderInfo;
+
 } generator;
 
 typedef struct Gate {
@@ -86,6 +98,16 @@ typedef struct Hatch {
     int open_flag; /* 1 if gate is open, 0 if closed */
 } hatch;
 
+typedef struct Wall {
+    /* Bounding coordinates */
+    int pos_x;
+    int pos_y;
+
+    int length_x;
+    int length_y;
+
+    int collision_quadrant;
+} wall;
 
 enum HealthStates {
     full_health,

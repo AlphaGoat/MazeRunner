@@ -13,8 +13,7 @@ enum Tiles {
 
 int checkForCollision(int x, int y, int **GameGrid);
 
-generator * InitGenerators(int num_generators, int map_height, int map_width,
-        int bound_gen_radius, int **GameGrid);
+generator InitGenerators(int x, int y);
 
 int InitMapTerrain(int **GameGrid);
 
